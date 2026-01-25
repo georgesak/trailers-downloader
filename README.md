@@ -35,6 +35,7 @@ Edit `config.py` to customize the behavior:
 -   **OUTPUT_FOLDER**: The directory where trailers will be saved.
 -   **LIMIT**: The number of trailers to download in one run.
 -   **MAX_WORKERS**: Number of parallel downloads.
+-   **MAX_VIDEO_HEIGHT**: Maximum video resolution (height) for downloads. Default is `1080`.
 -   **HISTORY_FILE**: The filename to store the list of downloaded trailers.
     -   Set to a filename (e.g., `'downloaded_history.txt'`) to enable history tracking (prevents duplicates).
     -   Set to `None`, `''` (empty string), or comment it out to **disable** history tracking.

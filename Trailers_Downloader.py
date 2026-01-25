@@ -7,11 +7,12 @@ import threading
 import config
 
 class TrailerDownloader:
-    def __init__(self, api_key, output_folder, allowed_genres, history_file):
+    def __init__(self, api_key, output_folder, allowed_genres, history_file, max_video_height=1080):
         self.api_key = api_key
         self.output_folder = output_folder
         self.allowed_genres = allowed_genres
         self.history_file = history_file
+        self.max_video_height = max_video_height
         self.allowed_ids = self._get_allowed_genre_ids()
         self.print_lock = threading.Lock() # To prevent garbled console output
 
@@ -92,9 +93,6 @@ class TrailerDownloader:
         safe_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c==' ' or c in '-_']).rstrip()
         filename = f"{safe_title} ({year})"
         file_path = os.path.join(self.output_folder, f"{filename}.mp4")
-        safe_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c==' ' or c in '-_']).rstrip()
-        filename = f"{safe_title} ({year})"
-        file_path = os.path.join(self.output_folder, f"{filename}.mp4")
         
         archive_file = None
         if self.history_file:
@@ -107,11 +105,9 @@ class TrailerDownloader:
         self.log(f"Processing: {filename}...")
         
         ydl_opts = {
-            'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+            'format': f'bestvideo[height<={self.max_video_height}]+bestaudio/best[height<={self.max_video_height}]/best',
             'merge_output_format': 'mp4',
             'outtmpl': file_path,
-            'quiet': True,
-            'no_warnings': True,
         }
         
         if archive_file:
@@ -161,7 +157,8 @@ class TrailerDownloader:
 
 def main():
     history_file = getattr(config, 'HISTORY_FILE', None)
-    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES, history_file)
+    max_video_height = getattr(config, 'MAX_VIDEO_HEIGHT', 1080)
+    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES, history_file, max_video_height)
     downloader.run(config.LIMIT, config.MAX_WORKERS)
 
 if __name__ == "__main__":
