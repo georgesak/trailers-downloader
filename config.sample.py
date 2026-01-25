@@ -3,6 +3,7 @@ TMDB_API_KEY = ''  # Paste your TMDB API key inside the quotes
 OUTPUT_FOLDER = r''     # Path where the trailers will be downloaded
 LIMIT = 10      # Number of trailers to download
 MAX_WORKERS = 2 # Number of parallel downloads
+HISTORY_FILE = 'downloaded_history.txt'  # File to store downloaded trailer history
 
 # Only movies containing AT LEAST one of these genres will be downloaded.
 # Set to 1 to include, 0 to exclude

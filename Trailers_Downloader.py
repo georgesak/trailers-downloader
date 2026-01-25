@@ -7,10 +7,11 @@ import threading
 import config
 
 class TrailerDownloader:
-    def __init__(self, api_key, output_folder, allowed_genres):
+    def __init__(self, api_key, output_folder, allowed_genres, history_file):
         self.api_key = api_key
         self.output_folder = output_folder
         self.allowed_genres = allowed_genres
+        self.history_file = history_file
         self.allowed_ids = self._get_allowed_genre_ids()
         self.print_lock = threading.Lock() # To prevent garbled console output
 
@@ -91,7 +92,7 @@ class TrailerDownloader:
         safe_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c==' ' or c in '-_']).rstrip()
         filename = f"{safe_title} ({year})"
         file_path = os.path.join(self.output_folder, f"{filename}.mp4")
-        archive_file = os.path.join(self.output_folder, 'downloaded_history.txt')
+        archive_file = os.path.join(self.output_folder, self.history_file)
 
         if os.path.exists(file_path):
             self.log(f"Skipping (File exists): {filename}")
@@ -152,7 +153,7 @@ class TrailerDownloader:
         self.log("\nDone!")
 
 def main():
-    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES)
+    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES, config.HISTORY_FILE)
     downloader.run(config.LIMIT, config.MAX_WORKERS)
 
 if __name__ == "__main__":
