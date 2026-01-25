@@ -92,7 +92,13 @@ class TrailerDownloader:
         safe_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c==' ' or c in '-_']).rstrip()
         filename = f"{safe_title} ({year})"
         file_path = os.path.join(self.output_folder, f"{filename}.mp4")
-        archive_file = os.path.join(self.output_folder, self.history_file)
+        safe_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c==' ' or c in '-_']).rstrip()
+        filename = f"{safe_title} ({year})"
+        file_path = os.path.join(self.output_folder, f"{filename}.mp4")
+        
+        archive_file = None
+        if self.history_file:
+            archive_file = os.path.join(self.output_folder, self.history_file)
 
         if os.path.exists(file_path):
             self.log(f"Skipping (File exists): {filename}")
@@ -106,9 +112,10 @@ class TrailerDownloader:
             'outtmpl': file_path,
             'quiet': True,
             'no_warnings': True,
-            'download_archive': archive_file,
-            # 'logger': logger_object_if_needed # Can add logger to suppress stdout further
         }
+        
+        if archive_file:
+            ydl_opts['download_archive'] = archive_file
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -153,7 +160,8 @@ class TrailerDownloader:
         self.log("\nDone!")
 
 def main():
-    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES, config.HISTORY_FILE)
+    history_file = getattr(config, 'HISTORY_FILE', None)
+    downloader = TrailerDownloader(config.TMDB_API_KEY, config.OUTPUT_FOLDER, config.ALLOWED_GENRES, history_file)
     downloader.run(config.LIMIT, config.MAX_WORKERS)
 
 if __name__ == "__main__":
