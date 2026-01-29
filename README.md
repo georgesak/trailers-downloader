@@ -25,7 +25,7 @@ A Python script to automatically download movie trailers from YouTube based on p
     pip install requests yt-dlp
     ```
 
-3.  Ensure `ffmpeg` is installed and added to your system's PATH.
+3.  Ensure `ffmpeg` is installed and added to your system's PATH (or in the same folder as the script).
 
 ## Configuration
 
